@@ -1,0 +1,19 @@
+{
+
+  "token": "DISCORD BOT TOKEN",
+  
+  "zenzo": {
+      "core": {
+        "host": "localhost",
+        "port": "22610",
+        "username": "USERNAME",
+        "password": "PASSWORD"
+      },
+      "forge": {
+          "host": "127.0.0.1",
+          "port": "80",
+          "authkey":"FORGE AUTH.KEY HERE!"
+      }
+  }
+
+}
