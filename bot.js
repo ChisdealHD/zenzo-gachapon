@@ -1,12 +1,15 @@
 const fs = require("fs");
+
+const config = require("./config.json");
+
 const superagent = require('superagent');
 const CryptoRPC = require('bitcoin-rpc-promise');
 const Discord = require('discord.js');
 
 // CONFIG --- TODO: Add an actual config file so you don't have to edit the code everytime you change the config >:3
-const authKey = ""; // Your Forge auth.key
-const botToken = ""; // Discord bot token
-var zenzo = new CryptoRPC('http://username:password@localhost:22610'); // Your ZENZO Core authenication (from zenzo.conf file)
+const authKey = config.zenzo.forge.authkey; // Your Forge auth.key
+const botToken = config.token; // Discord bot token
+var zenzo = new CryptoRPC(`http://${config.zenzo.core.username}:${config.zenzo.core.password}@${config.zenzo.core.host}:${config.zenzo.core.port}`); // Your ZENZO Core authenication (from zenzo.conf file)
 
 var bot = new Discord.Client()
 bot.on('ready', function () {
@@ -16,7 +19,7 @@ bot.on('ready', function () {
 
 async function getForgeInventory (addr) {
   let items = [];
-  let res = await superagent.post('http://127.0.0.1:80/forge/items');
+  let res = await superagent.post(`http://${config.zenzo.forge.host}:${config.zenzo.forge.port}/forge/items`);
   res = JSON.parse(res.text);
   for (let i=0; i<res.items.length; i++) {
     if (res.items[i].address === addr) items.push(res.items[i]);
@@ -26,7 +29,7 @@ async function getForgeInventory (addr) {
 
 async function getForgeProfile (addr) {
   let items = [];
-  let res = await superagent.post('http://127.0.0.1:80/forge/profiles');
+  let res = await superagent.post(`http://${config.zenzo.forge.host}:${config.zenzo.forge.port}/forge/profiles`);
   res = JSON.parse(res.text);
   for (let i=0; i<res.length; i++) {
     if (res[i].address === addr || res[i].name.replace("zenzo.", "").toLowerCase() === addr.toLowerCase()) {
@@ -37,7 +40,7 @@ async function getForgeProfile (addr) {
 }
 
 async function getForgeProfiles () {
-  let res = await superagent.post('http://127.0.0.1:80/forge/profiles');
+  let res = await superagent.post(`http://${config.zenzo.forge.host}:${config.zenzo.forge.port}/forge/profiles`);
   res = JSON.parse(res.text);
   return res;
 }
@@ -102,7 +105,7 @@ bot.on('message', msg => {
                         if (received && !depReceived) {
                             depReceived = true;
                             superagent
-                            .post('http://127.0.0.1:80/forge/create')
+                            .post(`http://${config.zenzo.forge.host}:${config.zenzo.forge.port}/forge/create`)
                             .send({amount: 5.001, name: "Gachapon Prize (ガシャポンカプセル)", auth: authKey})
                             .end((err, res) => {
                                 res = JSON.parse(res.text);
@@ -127,7 +130,7 @@ bot.on('message', msg => {
                                 msg.channel.send({embed})
                                 setTimeout(function(){
                                     superagent
-                                    .post('http://127.0.0.1:80/forge/transfer')
+                                    .post(`http://${config.zenzo.forge.host}:${config.zenzo.forge.port}/forge/transfer`)
                                     .send({item: res.tx, to: currentPlayerAddr, auth: authKey})
                                     .end((err, res) => {
                                         console.log(JSON.stringify(res))
