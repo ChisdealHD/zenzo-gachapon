@@ -11,7 +11,7 @@ const authKey = config.zenzo.forge.authkey; // Your Forge auth.key
 const botToken = config.token; // Discord bot token
 var zenzo = new CryptoRPC(`http://${config.zenzo.core.username}:${config.zenzo.core.password}@${config.zenzo.core.host}:${config.zenzo.core.port}`); // Your ZENZO Core authenication (from zenzo.conf file)
 
-var bot = new Discord.Client()
+var bot = new Discord.Client({autoReconnect:true})
 bot.on('ready', function () {
   console.log('Logged in! Serving in ' + bot.guilds.array().length + ' servers')
 });
